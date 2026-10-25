@@ -5,7 +5,6 @@ import ChapterDots from "./ChapterDots";
 import FAQSection from "./FAQSection";
 import Footer from "./Footer";
 import FounderSection from "./FounderSection";
-import HeroCanvas from "./HeroCanvas";
 import HeroSection from "./HeroSection";
 import ManifestoSection from "./ManifestoSection";
 import MemorySection from "./MemorySection";
@@ -31,18 +30,24 @@ export default function LandingPage() {
 
   useEffect(() => {
     const revealElements = document.querySelectorAll<HTMLElement>(".fade-up, .fade-in, .scale-in, .mask-line");
-    const revealObserver = new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -80px 0px" },
-    );
-    revealElements.forEach((element) => revealObserver.observe(element));
+    const revealObserver = typeof IntersectionObserver === "undefined"
+      ? null
+      : new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("in");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.15, rootMargin: "0px 0px -80px 0px" },
+      );
+    if (revealObserver) {
+      revealElements.forEach((element) => revealObserver.observe(element));
+    } else {
+      revealElements.forEach((element) => element.classList.add("in"));
+    }
 
     const tiltCards = Array.from(document.querySelectorAll<HTMLElement>(".card-3d"));
     const cardFrames = new Map<HTMLElement, number>();
@@ -127,7 +132,7 @@ export default function LandingPage() {
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
-      revealObserver.disconnect();
+      revealObserver?.disconnect();
       tiltCards.forEach((card) => {
         const onMouseMove = mouseMoves.get(card);
         const onMouseLeave = mouseLeaves.get(card);
@@ -146,7 +151,6 @@ export default function LandingPage() {
 
   return (
     <main className="site-shell">
-      <HeroCanvas />
       <Nav />
       <ChapterDots />
       <HeroSection />

@@ -1,33 +1,51 @@
 export default function HeroSection() {
   return (
-    <section id="hero" className="content-layer relative flex min-h-screen flex-col items-center justify-center px-6">
-      <div className="w-full max-w-[1200px] text-center">
-        <p className="fade-in d1 mb-12 text-[12px] tracking-[.3em] text-[#86868b] uppercase">
-          Introducing the AI Engineering Brain
-        </p>
-        <h1 className="font-sans text-[clamp(2.5rem,9vw,9rem)] leading-[0.95] font-semibold tracking-tightest text-[#f5f5f7]">
-          <span className="mask-line d2"><span>AI writes code.</span></span>
-          <span className="mask-line d3"><span className="text-[#86868b]">Synra remembers.</span></span>
-        </h1>
-        <p className="fade-up d4 mx-auto mt-16 max-w-2xl text-[17px] leading-[1.5] font-normal tracking-tight text-[#86868b] md:text-[21px]">
-          The persistent, evidence-backed memory layer that gives every AI coding tool a shared understanding of how your
-          company builds software.
-        </p>
-        <div className="fade-up d5 mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
-          <a href="#waitlist" className="btn btn-white rounded-md px-7 py-3 text-[14px] font-medium">
-            Request Early Access
-          </a>
-          <a href="#solution" className="flex items-center gap-1.5 text-[14px] font-normal text-[#f5f5f7] transition-colors duration-300 hover:text-[#86868b]">
-            Learn more
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" />
+    <div className="content-layer landing-stage">
+      <section id="hero" className="content-layer landing-hero">
+        <div className="landing-hero-content">
+          <p className="landing-badge fade-in d1">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2.6c.55 0 .88.55 1.08 2.1.62 4.7 1.52 5.6 6.22 6.22 1.55.2 2.1.53 2.1 1.08s-.55.88-2.1 1.08c-4.7.62-5.6 1.52-6.22 6.22-.2 1.55-.53 2.1-1.08 2.1s-.88-.55-1.08-2.1c-.62-4.7-1.52-5.6-6.22-6.22C3.15 12.88 2.6 12.55 2.6 12s.55-.88 2.1-1.08c4.7-.62 5.6-1.52 6.22-6.22.2-1.55.53-2.1 1.08-2.1Z" />
             </svg>
-          </a>
+            The AI engineering brain
+          </p>
+          <h1>
+            <span className="mask-line d2"><span>AI writes code.</span></span>
+            <span className="mask-line d3"><span>Synra <em>remembers.</em></span></span>
+          </h1>
+          <p className="landing-hero-copy fade-up d4">
+            A persistent, evidence-backed memory layer that gives every AI coding tool a shared understanding of how
+            your company builds software.
+          </p>
+          <div className="landing-hero-actions fade-up d5">
+            <a href="#waitlist" className="liquid-button">Request early access</a>
+            <a href="#solution" className="liquid-button liquid-button-ghost">See how it works</a>
+          </div>
         </div>
-      </div>
-      <div className="fade-in d5 absolute bottom-10 left-1/2 -translate-x-1/2" aria-hidden="true">
-        <div className="h-12 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent" />
-      </div>
-    </section>
+      </section>
+      <footer className="landing-stats content-layer" aria-label="Synra capabilities">
+        <span className="landing-stat">
+          <span className="landing-stat-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+              <path d="M5 5h5v5H5zM14 14h5v5h-5zM10 7.5h4a2 2 0 0 1 2 2V14" />
+            </svg>
+          </span>
+          Persistent memory across tools
+        </span>
+        <span className="landing-stat">
+          <span className="landing-stat-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+              <path d="M12 3 5 6v5c0 4.5 2.8 7.8 7 10 4.2-2.2 7-5.5 7-10V6l-7-3Z" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          </span>
+          Evidence-backed context
+        </span>
+        <span className="landing-stat">
+          <span className="landing-stat-mark" aria-hidden="true">↗</span>
+          Built for engineering teams
+        </span>
+      </footer>
+    </div>
   );
 }

@@ -140,7 +140,7 @@ export default function AppShell({
   const title = titles[pathname] || "Workspace";
 
   return (
-    <div className="min-h-screen bg-black text-neutral-100">
+    <div className="dashboard-shell min-h-screen bg-black text-neutral-100">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-neutral-800 lg:block">
         <Sidebar workspaceName={workspaceName} user={user} pathname={pathname} onNavigate={() => undefined} />
       </aside>

@@ -8,7 +8,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-5 py-12 text-neutral-100">
+    <main className="auth-shell flex min-h-screen items-center justify-center bg-black px-5 py-12 text-neutral-100">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 grid size-12 place-items-center rounded-lg border border-neutral-800 bg-neutral-950 text-xl font-semibold text-white">
@@ -16,7 +16,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
           </div>
           <p className="text-sm font-semibold tracking-[0.28em] text-white">SYNRA</p>
         </div>
-        <section className="rounded-lg border border-neutral-800 bg-neutral-950 p-7 shadow-2xl shadow-black sm:p-9">
+        <section className="auth-card rounded-lg border border-neutral-800 bg-neutral-950 p-7 shadow-2xl shadow-black sm:p-9">
           {children}
         </section>
         <p className="mt-6 text-center text-xs text-neutral-500">
