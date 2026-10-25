@@ -1,0 +1,26 @@
+{
+  "github": [
+    {
+      "event_type": "commit",
+      "prompt": "Fixture: add connection handling",
+      "response": "Added bounded retries.",
+      "metadata": {
+        "seed_id": "fixture:github:commit:abc123"
+      },
+      "timestamp": "2026-10-01T10:00:00Z"
+    }
+  ],
+  "gmail": [
+    {
+      "event_type": "email",
+      "prompt": "Email: Fixture project review (From: dev@example.test)",
+      "response": "Please review the fixture deployment checklist.",
+      "metadata": {
+        "gmail_id": "fixture-message-001",
+        "thread_id": "fixture-thread-001",
+        "seed_id": "gmail:message:fixture-message-001"
+      },
+      "timestamp": "2026-10-01T11:00:00Z"
+    }
+  ]
+}

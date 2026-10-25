@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: synra-api
+    runtime: python
+    plan: starter
+    region: singapore
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SYNRA_SESSION_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: AGENTMEMORY_URL
+        sync: false
+      - key: AGENTMEMORY_TOKEN
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GITHUB_OWNER
+        value: Nobioo7
+      - key: GITHUB_REPO
+        value: Saynra-software-
+      - key: GITHUB_SYNC_MODE
+        value: live

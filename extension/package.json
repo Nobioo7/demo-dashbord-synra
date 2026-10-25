@@ -1,0 +1,30 @@
+{
+  "name": "synra-extension",
+  "displayName": "Synra OS Memory",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "plasmo dev",
+    "build": "plasmo build"
+  },
+  "dependencies": {
+    "plasmo": "^0.90.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "manifest": {
+    "permissions": [
+      "storage"
+    ],
+    "host_permissions": [
+      "http://127.0.0.1:8000/*",
+      "https://chatgpt.com/*",
+      "https://chat.openai.com/*",
+      "https://claude.ai/*"
+    ]
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0"
+  }
+}

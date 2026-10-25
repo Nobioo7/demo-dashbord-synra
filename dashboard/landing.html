@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synra — Persistent Memory Layer</title>
+  <meta name="description" content="A persistent memory layer that captures context from GitHub, Chrome-based AI chats, and manual input, visualized as a live knowledge graph.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --fg: #ffffff;
+      --fg-muted: #8c8c8c;
+      --fg-subtle: #454545;
+      --border: #222222;
+      --accent: #00f3ff;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-family);
+      font-weight: 400;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background-color: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--accent);
+      color: #0a0a0a;
+    }
+
+    /* Minimal single-fade on scroll (300ms, no movement, no stagger) */
+    .fade {
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .fade.visible {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fade {
+        opacity: 1 !important;
+        transition: none !important;
+      }
+    }
+
+    /* 1. NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4vw;
+      z-index: 50;
+      background-color: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav-logo {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fg);
+      text-decoration: none;
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--fg-muted);
+      text-decoration: none;
+      transition: color 200ms ease;
+    }
+
+    .nav-link:hover {
+      color: var(--fg);
+    }
+
+    /* 2. HERO */
+    .hero {
+      position: relative;
+      padding: 160px 4vw 0;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+    }
+
+    .hero-headline {
+      font-size: clamp(2.75rem, 7.8vw, 7.5rem);
+      font-weight: 500;
+      line-height: 0.95;
+      letter-spacing: -0.045em;
+      color: var(--fg);
+      margin-bottom: 2.25rem;
+      max-width: 18ch;
+    }
+
+    /* Accent color used on only one word */
+    .accent {
+      color: var(--accent);
+    }
+
+    .hero-subhead {
+      font-size: clamp(1.125rem, 1.8vw, 1.375rem);
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--fg-muted);
+      margin-bottom: 2.75rem;
+      max-width: 38ch;
+    }
+
+    /* Primary CTA button — Accent color */
+    .btn-primary {
+      display: inline-block;
+      background-color: var(--accent);
+      color: #0a0a0a;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      border: none;
+      cursor: pointer;
+      transition: opacity 200ms ease;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.88;
+    }
+
+    /* Hero Graph Canvas */
+    .hero-graph-wrap {
+      position: relative;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      height: 640px;
+      margin-top: 3rem;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .hero-graph-wrap:active {
+      cursor: grabbing;
+    }
+
+    #heroCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 3. STATEMENT SECTION */
+    .statement-section {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 4vw;
+      text-align: center;
+    }
+
+    .statement-text {
+      font-size: clamp(2.5rem, 6.5vw, 6.25rem);
+      font-weight: 500;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: var(--fg);
+      max-width: 16ch;
+      margin: 0 auto;
+    }
+
+    /* 4. HOW IT WORKS */
+    .how-section {
+      padding: 160px 4vw;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .how-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7rem;
+    }
+
+    .how-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .how-label {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--fg-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .how-sentence {
+      font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+      font-weight: 400;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      color: #e5e5e5;
+    }
+
+    /* 5. THE GRAPH, AGAIN */
+    .dashboard-preview-section {
+      padding: 160px 4vw 80px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    .preview-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    .preview-counts {
+      font-size: 0.875rem;
+      font-weight: 400;
+      color: var(--fg-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .preview-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      background: none;
+      border: none;
+      color: var(--fg-muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.75rem;
+      cursor: pointer;
+      transition: color 150ms ease;
+    }
+
+    .filter-btn:hover {
+      color: var(--fg);
+    }
+
+    .filter-btn.active {
+      color: var(--fg);
+      background-color: var(--border);
+    }
+
+    .dashboard-graph-wrap {
+      position: relative;
+      width: 100%;
+      height: 580px;
+      margin-top: 1rem;
+    }
+
+    #previewCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .node-inspector {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem;
+      font-size: 0.8125rem;
+      color: var(--fg-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+    }
+
+    .inspector-col strong {
+      display: block;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* 6. CLOSING STATEMENT + SINGLE CTA */
+    .closing-section {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 160px 4vw;
+      text-align: center;
+    }
+
+    .closing-statement {
+      font-size: clamp(2.25rem, 5.5vw, 5rem);
+      font-weight: 500;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--fg);
+      max-width: 18ch;
+      margin-bottom: 3.5rem;
+    }
+
+    /* 7. FOOTER */
+    footer {
+      padding: 80px 4vw 60px;
+      max-width: 1440px;
+      margin: 0 auto;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .footer-logo {
+      font-size: 0.875rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fg);
+    }
+
+    .footer-text {
+      font-size: 0.8125rem;
+      color: var(--fg-muted);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        height: 64px;
+      }
+      .hero {
+        padding-top: 120px;
+      }
+      .hero-graph-wrap {
+        height: 440px;
+      }
+      .how-list {
+        gap: 4.5rem;
+      }
+      .dashboard-graph-wrap {
+        height: 420px;
+      }
+      .node-inspector {
+        gap: 1.5rem;
+      }
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Synra</a>
+    <a href="http://127.0.0.1:3000" class="nav-link">Sign in</a>
+  </nav>
+
+  <!-- 2. HERO -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="hero-headline fade">
+        Persistent <span class="accent">memory</span> across every conversation and commit.
+      </h1>
+      <p class="hero-subhead fade">
+        Synra captures context from GitHub, browser AI chats, and direct input into an interactive graph.
+      </p>
+      <div class="fade">
+        <a href="http://127.0.0.1:3000" class="btn-primary">Launch graph</a>
+      </div>
+    </div>
+
+    <!-- Live Interactive Knowledge Graph -->
+    <div class="hero-graph-wrap" id="heroGraphContainer">
+      <canvas id="heroCanvas"></canvas>
+    </div>
+  </header>
+
+  <!-- 3. STATEMENT SECTION -->
+  <section class="statement-section">
+    <h2 class="statement-text fade">
+      Every conversation. Every commit. One memory.
+    </h2>
+  </section>
+
+  <!-- 4. HOW IT WORKS -->
+  <section class="how-section">
+    <div class="how-list">
+      <div class="how-item fade">
+        <span class="how-label">01 / Capture</span>
+        <p class="how-sentence">
+          Chrome extensions and webhooks record decisions, prompts, and code changes as they happen.
+        </p>
+      </div>
+
+      <div class="how-item fade">
+        <span class="how-label">02 / Index</span>
+        <p class="how-sentence">
+          Entities, dependencies, and reasoning chains are connected into persistent graph nodes.
+        </p>
+      </div>
+
+      <div class="how-item fade">
+        <span class="how-label">03 / Recall</span>
+        <p class="how-sentence">
+          Query connected context directly from your editor, chat session, or visual workspace.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THE GRAPH, AGAIN (DASHBOARD PREVIEW) -->
+  <section class="dashboard-preview-section">
+    <div class="preview-header fade">
+      <div class="preview-counts" id="metricCounts">
+        248 indexed memories · 6 sources · 412 connections
+      </div>
+      <div class="preview-filters" id="sourceFilters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="github">GitHub</button>
+        <button class="filter-btn" data-filter="slack">Slack</button>
+        <button class="filter-btn" data-filter="gmail">Gmail</button>
+        <button class="filter-btn" data-filter="calendar">Calendar</button>
+        <button class="filter-btn" data-filter="ai">AI</button>
+        <button class="filter-btn" data-filter="extension">Extension</button>
+      </div>
+    </div>
+
+    <div class="dashboard-graph-wrap fade">
+      <canvas id="previewCanvas"></canvas>
+    </div>
+
+    <div class="node-inspector fade" id="nodeInspector">
+      <div class="inspector-col">
+        <strong>Selected node</strong>
+        <span id="inspLabel">commit 8f2a1b · vector sync</span>
+      </div>
+      <div class="inspector-col">
+        <strong>Source</strong>
+        <span id="inspSource">github / synra-engine</span>
+      </div>
+      <div class="inspector-col">
+        <strong>Payload</strong>
+        <span id="inspDetail">Refactored SQLite graph indexer and OpenAI embedding cache.</span>
+      </div>
+      <div class="inspector-col">
+        <strong>Connected</strong>
+        <span id="inspConn">7 links</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. CLOSING STATEMENT + SINGLE CTA -->
+  <section class="closing-section">
+    <h2 class="closing-statement fade">
+      Your engineering context, permanently connected.
+    </h2>
+    <div class="fade">
+      <a href="http://127.0.0.1:3000" class="btn-primary">Launch graph</a>
+    </div>
+  </section>
+
+  <!-- 7. FOOTER -->
+  <footer>
+    <span class="footer-logo">Synra</span>
+    <span class="footer-text">Persistent context layer for human and machine intelligence.</span>
+  </footer>
+
+  <script>
+    /* =========================================================
+       SCROLL OBSERVER: 300ms plain opacity fade, no movement
+       ========================================================= */
+    const faders = document.querySelectorAll('.fade');
+    const fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    faders.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        el.classList.add('visible');
+      }
+      fadeObserver.observe(el);
+    });
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* =========================================================
+       HERO GRAPH: Motion-as-spectacle knowledge graph
+       ========================================================= */
+    (function initHeroGraph() {
+      const canvas = document.getElementById('heroCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width = window.innerWidth;
+      let height = 640;
+      let animationId = null;
+
+      // Real product nodes
+      const rawNodes = [
+        { id: 'core', label: 'SYNRA CORE', isCore: true, r: 6, x: 0, y: 0, vx: 0, vy: 0 },
+        { id: 'n1', label: 'github/synra-engine', source: 'github', r: 3.5, x: -140, y: -60 },
+        { id: 'n2', label: 'commit 8f2a1b', source: 'github', r: 2.5, x: -220, y: -110 },
+        { id: 'n3', label: 'pr #42 context sync', source: 'github', r: 2.8, x: -190, y: 20 },
+        { id: 'n4', label: 'chatgpt/vector-rag', source: 'ai', r: 3.5, x: 130, y: -80 },
+        { id: 'n5', label: 'claude/ast-parser', source: 'ai', r: 3.2, x: 170, y: 30 },
+        { id: 'n6', label: 'chrome/tab-context', source: 'extension', r: 3.2, x: -40, y: 140 },
+        { id: 'n7', label: 'decision: graph topology', source: 'extension', r: 2.5, x: 60, y: 150 },
+        { id: 'n8', label: 'sqlite-cache', source: 'github', r: 2.8, x: -90, y: -160 },
+        { id: 'n9', label: 'oauth token refresh', source: 'extension', r: 2.4, x: -160, y: 120 },
+        { id: 'n10', label: 'linear / issue-304', source: 'slack', r: 2.6, x: 110, y: 110 },
+        { id: 'n11', label: 'memory/session-auth', source: 'ai', r: 2.6, x: 230, y: -30 },
+        { id: 'n12', label: 'schema migration v2', source: 'github', r: 2.4, x: 30, y: -140 },
+        { id: 'n13', label: 'calendar: sync standup', source: 'calendar', r: 2.5, x: 210, y: 100 }
+      ];
+
+      const rawLinks = [
+        ['core', 'n1'], ['core', 'n4'], ['core', 'n5'], ['core', 'n6'], ['core', 'n8'], ['core', 'n12'],
+        ['n1', 'n2'], ['n1', 'n3'], ['n1', 'n8'],
+        ['n4', 'n5'], ['n4', 'n11'],
+        ['n6', 'n7'], ['n6', 'n9'],
+        ['n7', 'n10'], ['n5', 'n10'], ['n10', 'n13'],
+        ['n11', 'n13'], ['n3', 'n9']
+      ];
+
+      const nodes = rawNodes.map((n, i) => {
+        const angle = (i / rawNodes.length) * Math.PI * 2;
+        const dist = n.isCore ? 0 : 80 + Math.random() * 160;
+        return {
+          ...n,
+          origX: n.x || Math.cos(angle) * dist,
+          origY: n.y || Math.sin(angle) * dist,
+          x: n.x || Math.cos(angle) * dist,
+          y: n.y || Math.sin(angle) * dist,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          pulse: Math.random() * Math.PI * 2
+        };
+      });
+
+      const links = rawLinks.map(([s, t]) => ({
+        source: nodes.find(n => n.id === s),
+        target: nodes.find(n => n.id === t),
+        particleT: Math.random()
+      })).filter(l => l.source && l.target);
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = rect.width;
+        height = rect.height;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      let mouseX = null;
+      let mouseY = null;
+      let hoveredNode = null;
+      let draggedNode = null;
+
+      function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: e.clientX - rect.left - width / 2,
+          y: e.clientY - rect.top - height / 2
+        };
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const pos = getCanvasCoords(e);
+        const hit = nodes.find(n => Math.hypot(n.x - pos.x, n.y - pos.y) < n.r + 14);
+        if (hit) {
+          draggedNode = hit;
+          draggedNode.isDragging = true;
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        const pos = getCanvasCoords(e);
+        mouseX = pos.x;
+        mouseY = pos.y;
+        if (draggedNode) {
+          draggedNode.x = pos.x;
+          draggedNode.y = pos.y;
+        } else {
+          hoveredNode = nodes.find(n => Math.hypot(n.x - pos.x, n.y - pos.y) < n.r + 12) || null;
+        }
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (draggedNode) {
+          draggedNode.isDragging = false;
+          draggedNode = null;
+        }
+      });
+
+      let time = 0;
+
+      function render() {
+        time += 0.012;
+        ctx.clearRect(0, 0, width, height);
+
+        const cx = width / 2;
+        const cy = height / 2;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Update physics & idle drift unless reduced motion is on
+        if (!reducedMotion) {
+          nodes.forEach((n) => {
+            if (n.isDragging) return;
+            if (n.isCore) {
+              n.x = Math.sin(time * 0.4) * 4;
+              n.y = Math.cos(time * 0.35) * 4;
+              return;
+            }
+
+            // Gentle harmonic orbit drift
+            n.pulse += 0.015;
+            const driftX = Math.sin(time * 0.3 + n.pulse) * 0.35;
+            const driftY = Math.cos(time * 0.25 + n.pulse) * 0.35;
+
+            // Soft spring toward home position
+            const homeDx = n.origX - n.x;
+            const homeDy = n.origY - n.y;
+            n.x += homeDx * 0.015 + driftX;
+            n.y += homeDy * 0.015 + driftY;
+          });
+        }
+
+        // Draw connections
+        links.forEach((link) => {
+          const isHighlighted = hoveredNode && (hoveredNode === link.source || hoveredNode === link.target);
+          ctx.beginPath();
+          ctx.moveTo(link.source.x, link.source.y);
+          ctx.lineTo(link.target.x, link.target.y);
+
+          if (isHighlighted) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.lineWidth = 1.2;
+          } else {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 0.75;
+          }
+          ctx.stroke();
+
+          // Traveling data particle
+          if (!reducedMotion) {
+            link.particleT = (link.particleT + 0.0035) % 1;
+            const px = link.source.x + (link.target.x - link.source.x) * link.particleT;
+            const py = link.source.y + (link.target.y - link.source.y) * link.particleT;
+
+            ctx.beginPath();
+            ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fill();
+          }
+        });
+
+        // Draw nodes
+        nodes.forEach((n) => {
+          const isHovered = hoveredNode === n;
+
+          if (n.isCore) {
+            // Core node ring pulse
+            ctx.beginPath();
+            const ringRadius = 14 + Math.sin(time * 1.5) * 2;
+            ctx.arc(n.x, n.y, ringRadius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Core center
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+          } else {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, isHovered ? n.r * 1.5 : n.r, 0, Math.PI * 2);
+            ctx.fillStyle = isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.7)';
+            ctx.fill();
+          }
+
+          // Plain text label on hover or for core
+          if (n.isCore || isHovered) {
+            ctx.font = '500 10px Inter, -apple-system, sans-serif';
+            ctx.fillStyle = n.isCore ? '#ffffff' : '#e5e5e5';
+            ctx.letterSpacing = '0.08em';
+            ctx.textAlign = 'center';
+            ctx.fillText(n.label, n.x, n.y - (n.isCore ? 20 : 12));
+          }
+        });
+
+        ctx.restore();
+
+        if (!reducedMotion) {
+          animationId = requestAnimationFrame(render);
+        }
+      }
+
+      render();
+    })();
+
+    /* =========================================================
+       DASHBOARD PREVIEW GRAPH: Filterable, inspection view
+       ========================================================= */
+    (function initPreviewGraph() {
+      const canvas = document.getElementById('previewCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let width, height;
+
+      const previewNodes = [
+        { id: 'core', label: 'SYNRA CORE', source: 'core', r: 5, x: 0, y: 0, detail: 'Central context aggregation kernel.', conns: 12 },
+        { id: 'gh1', label: 'commit 8f2a1b', source: 'github', r: 3, x: -160, y: -70, detail: 'Refactored vector retrieval pipeline and SQLite graph synchronization.', conns: 7 },
+        { id: 'gh2', label: 'pull #42 merge', source: 'github', r: 2.8, x: -220, y: 40, detail: 'Merged multi-workspace context capture extension patch.', conns: 4 },
+        { id: 'gh3', label: 'repo synra/backend', source: 'github', r: 3.5, x: -120, y: -140, detail: 'Core context server endpoints and sqlite db backend.', conns: 8 },
+        { id: 'ai1', label: 'chatgpt / thread-912', source: 'ai', r: 3.2, x: 140, y: -80, detail: 'Debugging embeddings vector distance calculations.', conns: 5 },
+        { id: 'ai2', label: 'claude / pr-review', source: 'ai', r: 3, x: 190, y: 30, detail: 'Review comments on graph serialization logic.', conns: 4 },
+        { id: 'ext1', label: 'chrome / active-tab', source: 'extension', r: 3, x: -60, y: 120, detail: 'Context captured from documentation page on Github.', conns: 6 },
+        { id: 'ext2', label: 'oauth session', source: 'extension', r: 2.5, x: -130, y: 130, detail: 'Persistent access token refresh cycle.', conns: 3 },
+        { id: 'slk1', label: 'slack / #eng-core', source: 'slack', r: 2.8, x: 90, y: 130, detail: 'Architectural alignment on graph node pruning policy.', conns: 4 },
+        { id: 'gml1', label: 'gmail / alerts', source: 'gmail', r: 2.5, x: 230, y: -90, detail: 'Automated deployment status and schema migration logs.', conns: 2 },
+        { id: 'cal1', label: 'calendar / sprint planning', source: 'calendar', r: 2.5, x: 160, y: 120, detail: 'Recorded context for sprint goal definition.', conns: 3 }
+      ];
+
+      const previewLinks = [
+        ['core', 'gh1'], ['core', 'gh3'], ['core', 'ai1'], ['core', 'ai2'], ['core', 'ext1'], ['core', 'slk1'],
+        ['gh1', 'gh2'], ['gh1', 'gh3'], ['ai1', 'ai2'], ['ext1', 'ext2'], ['slk1', 'cal1'], ['gh3', 'gml1']
+      ];
+
+      const nodes = previewNodes.map(n => ({ ...n }));
+      const links = previewLinks.map(([s, t]) => ({
+        source: nodes.find(n => n.id === s),
+        target: nodes.find(n => n.id === t)
+      })).filter(l => l.source && l.target);
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = rect.width;
+        height = rect.height;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      let activeFilter = 'all';
+      let selectedNode = nodes[1]; // default selected: commit 8f2a1b
+
+      function updateInspector(node) {
+        if (!node) return;
+        document.getElementById('inspLabel').textContent = node.label;
+        document.getElementById('inspSource').textContent = node.source.toUpperCase();
+        document.getElementById('inspDetail').textContent = node.detail;
+        document.getElementById('inspConn').textContent = node.conns + ' links';
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        const cx = width / 2;
+        const cy = height / 2;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Draw connections
+        links.forEach(l => {
+          const sMatch = activeFilter === 'all' || l.source.source === activeFilter || l.source.source === 'core';
+          const tMatch = activeFilter === 'all' || l.target.source === activeFilter || l.target.source === 'core';
+          const isSelected = selectedNode && (selectedNode === l.source || selectedNode === l.target);
+
+          ctx.beginPath();
+          ctx.moveTo(l.source.x, l.source.y);
+          ctx.lineTo(l.target.x, l.target.y);
+
+          if (isSelected) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.lineWidth = 1.2;
+          } else if (sMatch && tMatch) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 0.75;
+          } else {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 0.5;
+          }
+          ctx.stroke();
+        });
+
+        // Draw nodes
+        nodes.forEach(n => {
+          const matches = activeFilter === 'all' || n.source === activeFilter || n.source === 'core';
+          const isSelected = selectedNode === n;
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, isSelected ? n.r * 1.6 : n.r, 0, Math.PI * 2);
+
+          if (isSelected) {
+            ctx.fillStyle = '#ffffff';
+          } else if (matches) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          } else {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+          }
+          ctx.fill();
+
+          // Labels
+          if (matches || isSelected) {
+            ctx.font = '500 9px Inter, -apple-system, sans-serif';
+            ctx.fillStyle = isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.5)';
+            ctx.textAlign = 'center';
+            ctx.fillText(n.label, n.x, n.y - (n.r + 7));
+          }
+        });
+
+        ctx.restore();
+      }
+
+      draw();
+
+      // Filter button interaction
+      const filterBtns = document.querySelectorAll('#sourceFilters .filter-btn');
+      const countsEl = document.getElementById('metricCounts');
+
+      const filterCounts = {
+        all: '248 indexed memories · 6 sources · 412 connections',
+        github: '114 indexed memories · 1 source · 186 connections',
+        slack: '42 indexed memories · 1 source · 68 connections',
+        gmail: '18 indexed memories · 1 source · 24 connections',
+        calendar: '12 indexed memories · 1 source · 19 connections',
+        ai: '52 indexed memories · 1 source · 94 connections',
+        extension: '36 indexed memories · 1 source · 58 connections'
+      };
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeFilter = btn.getAttribute('data-filter');
+          countsEl.textContent = filterCounts[activeFilter] || filterCounts.all;
+          draw();
+        });
+      });
+
+      // Canvas click node inspection
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left - width / 2;
+        const clickY = e.clientY - rect.top - height / 2;
+
+        const hit = nodes.find(n => Math.hypot(n.x - clickX, n.y - clickY) < n.r + 14);
+        if (hit) {
+          selectedNode = hit;
+          updateInspector(hit);
+          draw();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
