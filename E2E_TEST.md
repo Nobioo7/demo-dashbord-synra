@@ -37,3 +37,21 @@ Verify `http://127.0.0.1:8000/health` responds successfully before testing the b
 ## Production auth smoke test
 
 On the deployed site, verify Google sign-in uses the registered production callback URL, then repeat workspace creation and tenant-isolation checks. Do not use the development Credentials provider for production testing; it is disabled outside development.
+
+## Vercel Services local routing test
+
+Use Vercel CLI 48.1.8 or newer from the repository root to run the services
+together:
+
+```powershell
+vercel dev
+```
+
+Keep the backend settings in `backend/.env` and dashboard auth settings in
+`dashboard/.env.local`. Vercel Services supplies the dashboard's
+`SYNRA_BACKEND_URL` binding; do not set that binding manually. Verify that
+`/api/auth/providers` is served by Next.js, `/health` is served by FastAPI, and
+`/app/overview` is served by the dashboard. With a workspace session, verify a
+dashboard request through `/backend/api/v1/workspaces` reaches the backend and
+that a direct `/api/v1/workspaces` request rejects missing API-key or signed
+session authentication.

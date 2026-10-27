@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getErrorMessage, useWorkspaceIdFromCookie } from "@/lib/memories";
 
 const API_BASE_URL = "/backend";
-const SYNRA_API_BASE_URL = (
+const CONFIGURED_API_BASE_URL = (
   process.env.NEXT_PUBLIC_SYNRA_API_BASE_URL?.trim()
   || (process.env.NODE_ENV === "production" ? "" : "http://127.0.0.1:8000/api/v1")
 ).replace(/\/+$/, "");
@@ -18,7 +18,7 @@ type ApiKey = {
 
 type CreatedApiKey = ApiKey & { key: string };
 
-function createMcpConfiguration(key: string) {
+function createMcpConfiguration(key: string, apiBaseUrl: string) {
   return JSON.stringify(
     {
       mcpServers: {
@@ -26,7 +26,7 @@ function createMcpConfiguration(key: string) {
           command: "npm",
           args: ["--prefix", "C:\\path\\to\\Saynra-software\\mcp-server", "run", "start"],
           env: {
-            SYNRA_API_BASE_URL,
+            SYNRA_API_BASE_URL: apiBaseUrl,
             SYNRA_API_KEY: key,
           },
         },
@@ -93,6 +93,7 @@ function ConnectionSource({
 
 export default function ConnectionsPanel() {
   const workspaceId = useWorkspaceIdFromCookie();
+  const [apiBaseUrl, setApiBaseUrl] = useState(CONFIGURED_API_BASE_URL);
   const [sources, setSources] = useState<Record<string, SourceState>>({
     github: { connected: true, message: "" },
     gmail: { connected: true, message: "" },
@@ -106,9 +107,14 @@ export default function ConnectionsPanel() {
   const [creatingKey, setCreatingKey] = useState(false);
   const [revokingKeyId, setRevokingKeyId] = useState<string | null>(null);
   const mcpConfiguration = useMemo(
-    () => createMcpConfiguration(createdKey?.key ?? "generate-a-key-first"),
-    [createdKey],
+    () => createMcpConfiguration(createdKey?.key ?? "generate-a-key-first", apiBaseUrl),
+    [apiBaseUrl, createdKey],
   );
+
+  useEffect(() => {
+    if (apiBaseUrl || process.env.NODE_ENV !== "production") return;
+    setApiBaseUrl(`${window.location.origin}/api/v1`);
+  }, [apiBaseUrl]);
 
   useEffect(() => {
     if (workspaceId === null) return;
@@ -216,8 +222,8 @@ export default function ConnectionsPanel() {
       setCopyError("Generate a new API key before copying the MCP configuration.");
       return;
     }
-    if (!SYNRA_API_BASE_URL) {
-      setCopyError("Set NEXT_PUBLIC_SYNRA_API_BASE_URL before copying the MCP configuration.");
+    if (!apiBaseUrl) {
+      setCopyError("The public backend API URL is not available.");
       return;
     }
     setCopyError("");
@@ -305,7 +311,7 @@ export default function ConnectionsPanel() {
           <button
             type="button"
             onClick={() => void copyConfiguration()}
-            disabled={!createdKey || !SYNRA_API_BASE_URL}
+            disabled={!createdKey || !apiBaseUrl}
             className="rounded-md border border-neutral-800 px-3 py-2 text-xs font-medium text-neutral-200 transition hover:bg-neutral-900 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {copied ? "Copied" : "Copy MCP configuration"}
@@ -341,7 +347,7 @@ export default function ConnectionsPanel() {
         <p className="mt-4 text-xs leading-5 text-neutral-500">
           Update the <code className="font-mono text-neutral-300">C:\\path\\to\\Saynra-software\\mcp-server</code>
           {" "}placeholder to your local package path. API base:{" "}
-          <code className="break-all font-mono text-neutral-300">{SYNRA_API_BASE_URL || "not configured"}</code>
+          <code className="break-all font-mono text-neutral-300">{apiBaseUrl || "not configured"}</code>
         </p>
         <pre className="mt-4 overflow-x-auto rounded-md border border-neutral-800 bg-black p-4 font-mono text-sm leading-6 text-neutral-200">
           <code>{mcpConfiguration}</code>

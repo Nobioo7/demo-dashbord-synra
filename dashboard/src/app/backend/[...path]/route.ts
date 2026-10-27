@@ -2,11 +2,6 @@ import type { NextRequest } from "next/server";
 import { createHmac } from "node:crypto";
 import { getToken } from "next-auth/jwt";
 
-const BACKEND_URL = (
-  process.env.SYNRA_BACKEND_URL?.trim()
-  || (process.env.NODE_ENV === "production" ? "" : "http://127.0.0.1:8000")
-).replace(/\/+$/, "");
-
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -14,7 +9,11 @@ type RouteContext = {
 };
 
 async function proxy(request: NextRequest, { params }: RouteContext): Promise<Response> {
-  if (!BACKEND_URL) {
+  const backendUrl = (
+    process.env.SYNRA_BACKEND_URL?.trim()
+    || (process.env.NODE_ENV === "production" ? "" : "http://127.0.0.1:8000")
+  ).replace(/\/+$/, "");
+  if (!backendUrl) {
     return Response.json({ detail: "Backend proxy is not configured." }, { status: 500 });
   }
 
@@ -38,7 +37,8 @@ async function proxy(request: NextRequest, { params }: RouteContext): Promise<Re
       .digest("hex")
     : "";
   const requestUrl = new URL(request.url);
-  const upstreamUrl = `${BACKEND_URL}/${path.map(encodeURIComponent).join("/")}${requestUrl.search}`;
+  const upstreamUrl = new URL(path.map(encodeURIComponent).join("/"), `${backendUrl}/`);
+  upstreamUrl.search = requestUrl.search;
   const headers = new Headers(request.headers);
   headers.delete("x-api-key");
   headers.delete("x-synra-user-id");

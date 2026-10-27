@@ -1,8 +1,9 @@
 # Synra deployment guide
 
-This repository deploys the Next.js dashboard to Vercel and the FastAPI API to
-Render. Memory, workspace, integration-key, and sync-run data are stored in
-Supabase PostgreSQL. The Supabase service-role key is used only by the backend.
+This repository can deploy the Next.js dashboard and FastAPI API as two Vercel
+Services from the repository root, or deploy the API separately to Render.
+Memory, workspace, integration-key, and sync-run data are stored in Supabase
+PostgreSQL. The Supabase service-role key is used only by the backend.
 
 ## 1. Create the Supabase schema
 
@@ -10,8 +11,8 @@ Supabase PostgreSQL. The Supabase service-role key is used only by the backend.
 2. Run `supabase/migrations/20261025000000_init.sql` once. It creates
    `workspaces`, `memories`, `api_keys`, `sync_runs`, and `waitlist_signups`.
 3. In Project Settings → API, copy the project URL and the `service_role` key.
-   Store these as `SUPABASE_URL` and `SUPABASE_KEY` in Render only. Do not add
-   either value to the dashboard or commit them.
+   Store these as `SUPABASE_URL` and `SUPABASE_KEY` in the backend service on
+   Vercel or Render only. Do not add either value to the dashboard or commit them.
 4. Confirm the tables exist before deploying. The API `/health` endpoint checks
    connectivity to `workspaces` and reports a non-200 response if the database
    is unavailable.
@@ -70,35 +71,52 @@ persistent `/data` disk and sets `PORT=3111`, `AGENTMEMORY_VERSION`,
 `III_VERSION`, and `III_SDK_VERSION`. No LLM provider secret is required for
 basic BM25 operation. On first boot, the service generates
 `AGENTMEMORY_SECRET` and prints it once in the Render logs. Copy that value to
-the FastAPI service's `AGENTMEMORY_TOKEN` variable. The public service URL
+the backend service's `AGENTMEMORY_TOKEN` variable. The public service URL
 becomes `AGENTMEMORY_URL`; the health endpoint is `/agentmemory/livez`.
 
 Once the engine has a stable HTTPS origin and a configured bearer token, set
-those values in the FastAPI Render service as `AGENTMEMORY_URL` and
+those values in the FastAPI service as `AGENTMEMORY_URL` and
 `AGENTMEMORY_TOKEN`. Verify the upstream `/agentmemory/livez` endpoint before
 testing the Synra `/api/v1/agentmemory/graph` endpoint. The graph API returns
 only records carrying the requested workspace/project ID; unscoped shared
 records are intentionally excluded.
 
-## 4. Deploy the dashboard to Vercel
+## 4. Deploy the dashboard and API to Vercel Services
 
-1. Import the same repository into Vercel and set Root Directory to `dashboard`.
+1. Import the Git repository into Vercel with the repository root as the project
+   root. The root `vercel.json` defines the `backend` FastAPI service and the
+   `dashboard` Next.js service; do not set the Vercel project root to
+   `dashboard`.
 2. Configure Google OAuth with the production callback URL
    `https://<dashboard-domain>/api/auth/callback/google`.
 3. Set these environment variables for Production (and Preview if used):
    - `NEXTAUTH_URL`: the canonical dashboard URL.
    - `NEXTAUTH_SECRET`: a fresh random NextAuth secret.
    - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`: Google OAuth credentials.
-   - `SYNRA_BACKEND_URL`: the Render API origin, without `/api/v1`.
-   - `SYNRA_SESSION_SECRET`: exactly the same value used by Render.
-   - `NEXT_PUBLIC_SYNRA_API_BASE_URL`: Render API origin plus `/api/v1`; this
-     value is used only in client setup snippets and is not a credential.
-4. Set the Vercel production domain as Render's `FRONTEND_URL`. Update Render's
-   `CORS_ALLOWED_ORIGINS` with any additional exact domains. The dashboard's
-   server-side proxy is same-origin and does not require permissive Vercel
-   wildcard CORS.
-5. Deploy and verify sign-in, workspace creation, memory listing, API-key
-   creation/revocation, and `/health` from the browser.
+   - `SYNRA_SESSION_SECRET`: the shared HMAC secret, configured for both
+     `dashboard` and `backend`.
+   - `SUPABASE_URL` and `SUPABASE_KEY`: backend service only.
+   - `APP_ENV=production`: backend service only.
+   - `AGENTMEMORY_URL` and `AGENTMEMORY_TOKEN`: backend service only, if the
+     AgentMemory graph is enabled.
+   - `GITHUB_TOKEN` and any required Gmail credentials: backend service only
+     when those integrations are enabled.
+4. Do not manually set `SYNRA_BACKEND_URL` in Vercel. The binding in
+   `vercel.json` injects the backend service URL into the dashboard at runtime.
+   The Connections page derives the public integration URL from the deployed
+   origin as `https://<dashboard-domain>/api/v1`; set
+   `NEXT_PUBLIC_SYNRA_API_BASE_URL` only when intentionally overriding it.
+5. Public routing sends `/api/auth/*` to Next.js, `/api/*` and `/health` to
+   FastAPI, and every other path to the dashboard. The backend is reachable
+   externally only through those routed paths; its internal service binding
+   does not itself make it public. MCP and extension clients use the public
+   `https://<dashboard-domain>/api/v1` URL and workspace-scoped API keys.
+6. Configure `AGENTMEMORY_URL` and `AGENTMEMORY_TOKEN` with a separately hosted
+   AgentMemory service if needed; that engine is not part of this Vercel
+   services configuration.
+7. Test the services locally with `vercel dev`, then deploy and verify sign-in,
+   workspace creation, memory listing, API-key creation/revocation, and the
+   public `/health` route.
 
 The Next.js proxy validates NextAuth, removes caller-supplied identity and API
 key headers, and signs the stable NextAuth subject with `SYNRA_SESSION_SECRET`.

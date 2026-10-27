@@ -1,0 +1,51 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "backend": {
+      "root": "backend",
+      "framework": "fastapi",
+      "entrypoint": "main:app"
+    },
+    "dashboard": {
+      "root": "dashboard",
+      "framework": "nextjs",
+      "installCommand": "pnpm install --frozen-lockfile",
+      "buildCommand": "pnpm build",
+      "regions": ["sin1"],
+      "bindings": [
+        {
+          "type": "service",
+          "service": "backend",
+          "format": "url",
+          "env": "SYNRA_BACKEND_URL"
+        }
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/auth/(.*)",
+      "destination": {
+        "service": "dashboard"
+      }
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/health",
+      "destination": {
+        "service": "backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "dashboard"
+      }
+    }
+  ]
+}
