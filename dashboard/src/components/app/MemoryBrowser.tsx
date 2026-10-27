@@ -17,8 +17,8 @@ function sourceLabel(source: string): string {
   return source ? source.charAt(0).toUpperCase() + source.slice(1) : "Unknown";
 }
 
-function sourceClasses(source: string): string {
-  return "border-neutral-800 bg-neutral-900 text-neutral-300";
+function sourceClasses(): string {
+  return "source-pill border border-white/10 bg-white/5 text-xs text-white/70";
 }
 
 function formatDate(timestamp: string): string {
@@ -147,7 +147,7 @@ export default function MemoryBrowser() {
         </p>
       </div>
 
-      <section className="rounded-md border border-neutral-800 bg-black">
+      <section className="memory-table rounded-2xl border border-white/10 bg-[#0e1014]">
         <div className="flex flex-col gap-3 border-b border-neutral-800 p-4 sm:flex-row">
           <label className="relative min-w-0 flex-1">
             <span className="sr-only">Search memories</span>
@@ -188,7 +188,7 @@ export default function MemoryBrowser() {
         ) : items.length > 0 ? (
           <div className="divide-y divide-neutral-800">
             {items.map((item) => (
-              <article key={item.id} className="flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
+              <article key={item.id} className="memory-row flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/app/memories/${encodeURIComponent(item.id)}`}
@@ -199,7 +199,7 @@ export default function MemoryBrowser() {
                   <p className="mt-2 text-xs text-neutral-500">{formatDate(item.created_at)}</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">
-                  <span className={`rounded-md border px-2.5 py-1 text-xs ${sourceClasses(item.source)}`}>
+                  <span className={`rounded-full border px-2.5 py-1 ${sourceClasses()}`}>
                     {sourceLabel(item.source)}
                   </span>
                   <Link

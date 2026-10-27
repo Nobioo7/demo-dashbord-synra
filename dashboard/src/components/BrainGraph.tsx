@@ -309,7 +309,10 @@ export default function BrainGraph({
           nodeThreeObjectExtend={false} nodeLabel={(node) => node.group === "core" ? "<strong>SYNRA</strong><br/>CONTEXT CORE" : node.group === "project" || hoveredNode?.id === node.id || selectedNode?.id === node.id ? `<strong>${node.label}</strong><br/>${node.source ?? node.group}` : ""} nodeVal={(node) => (node.val ?? 3) * densityScale} nodeRelSize={5} nodeResolution={12}
           linkDirectionalParticles={particleCount} linkDirectionalParticleSpeed={particleSpeed} linkDirectionalParticleWidth={1.5} linkDirectionalParticleColor={() => "#d4af37"} linkDirectionalParticleThreeObject={() => particle} onNodeClick={handleNodeClick} onNodeHover={(node) => setHoveredNode(node)} onEngineStop={fitGraph} cooldownTime={1200} d3VelocityDecay={0.35} d3AlphaDecay={0.03} />
       </div>
-      <header className="pointer-events-none absolute inset-x-0 top-0 flex h-16 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/90 px-6 text-[#f5f5f7]">
+      <header
+        className="pointer-events-none absolute inset-x-0 top-0 flex h-16 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/90 px-6 text-[#f5f5f7]"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
         <div className="flex items-center gap-3">
           <span className="text-xl text-[#86868b]" aria-hidden="true">◈</span>
           <h1 className="text-base font-semibold">Memory Graph</h1>
@@ -361,7 +364,10 @@ export default function BrainGraph({
         <span className="text-xl text-[#86868b]" aria-label="Close">×</span>
       </header>
       <p className="pointer-events-none absolute left-6 top-[4.5rem] text-xs text-[#86868b]">{activeDataSource === "agentmemory" ? "Viewing AgentMemory shared graph" : `Viewing Synra Core · ${projectId}`} {context ? `· ${memories} indexed memor${memories === 1 ? "y" : "ies"} · ${sourceCount} sources · ${connectionCount} connections` : "· Connecting to memory service…"}</p>
-      <div className="pointer-events-auto absolute right-6 top-[4.5rem] z-[2] flex flex-col items-end gap-2">
+      <div
+        className="pointer-events-auto absolute right-6 top-[4.5rem] z-[2] flex flex-col items-end gap-2"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
           <div className="flex gap-2">
             <button type="button" onClick={fitGraph} className="rounded-md border border-neutral-800 bg-black px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-900">Focus Brain</button>
             <button type="button" onClick={() => void loadContext()} className="rounded-md border border-neutral-800 bg-black px-3 py-2 text-sm text-neutral-200 hover:bg-neutral-900">Refresh</button>
@@ -373,16 +379,42 @@ export default function BrainGraph({
             ))}
           </div>
       </div>
-      <aside className="absolute left-5 top-28 w-44 rounded-md border border-neutral-800 bg-black p-3 text-xs text-neutral-400">
+      <aside
+        className="absolute left-5 top-28 w-44 rounded-md border border-neutral-800 bg-black p-3 text-xs text-neutral-400"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
         <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#86868b]">Categories</p>
         {[["#d4af37", "Core"], ["#8a7431", "Project"], ["#86868b", "Sources"], ["#f5f5f7", "Memories"]].map(([color, label]) => (
           <div key={label} className="mb-2 flex items-center gap-2"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />{label}</div>
         ))}
         <button type="button" onClick={fitGraph} className="mt-2 w-full rounded-md bg-white/10 px-2 py-2 text-xs text-[#f5f5f7] hover:bg-white/15">Reset View</button>
       </aside>
-      {context && memories === 0 && !error && <aside className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 rounded-md border border-neutral-800 bg-black px-4 py-3 text-center shadow-xl"><p className="text-sm text-neutral-300">No memories found. Ingest some data to see the graph.</p></aside>}
+      {context && memories === 0 && !error && (
+        <aside
+          className="pointer-events-none absolute bottom-16 left-1/2 -translate-x-1/2 rounded-md border border-neutral-800 bg-black px-4 py-3 text-center shadow-xl"
+          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+        >
+          <p className="text-sm text-neutral-300">No memories found. Ingest some data to see the graph.</p>
+        </aside>
+      )}
       {context && <p className="absolute bottom-5 left-5 rounded bg-black/80 px-2 py-1 text-xs text-[#86868b]">{memories} memor{memories === 1 ? "y" : "ies"} · {connectionCount} connections</p>}
-      {(error || selectedNode) && <aside className="absolute bottom-6 left-6 max-w-md rounded-lg border border-white/10 bg-[#0a0a0a]/95 p-4 shadow-2xl"><p className="text-sm font-medium text-[#f5f5f7]">{error ? "Connection problem" : selectedNode?.label}</p>{error ? <p className="mt-2 text-sm text-[#f5f5f7]">{error}</p> : selectedNode && <div className="mt-2 space-y-2 text-sm leading-6 text-[#86868b]"><p><span className="text-[#f5f5f7]">Source:</span> {selectedNode.source ?? selectedNode.label}</p><p><span className="text-[#f5f5f7]">Project:</span> {selectedNode.projectId ?? context?.project_id ?? "chatgpt"}</p>{selectedNode.timestamp && <p><span className="text-[#f5f5f7]">Time:</span> {new Date(selectedNode.timestamp).toLocaleString()}</p>}<p className="whitespace-pre-line">{selectedNode.content ?? selectedNode.detail}</p><p><span className="text-[#f5f5f7]">Connected memories:</span> {relatedCount}</p></div>}</aside>}
+      {(error || selectedNode) && (
+        <aside
+          className="absolute bottom-6 left-6 max-w-md rounded-lg border border-white/10 bg-[#0a0a0a]/95 p-4 shadow-2xl"
+          style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+        >
+          <p className="text-sm font-medium text-[#f5f5f7]">{error ? "Connection problem" : selectedNode?.label}</p>
+          {error ? <p className="mt-2 text-sm text-[#f5f5f7]">{error}</p> : selectedNode && (
+            <div className="mt-2 space-y-2 text-sm leading-6 text-[#86868b]">
+              <p><span className="text-[#f5f5f7]">Source:</span> {selectedNode.source ?? selectedNode.label}</p>
+              <p><span className="text-[#f5f5f7]">Project:</span> {selectedNode.projectId ?? context?.project_id ?? "chatgpt"}</p>
+              {selectedNode.timestamp && <p><span className="text-[#f5f5f7]">Time:</span> {new Date(selectedNode.timestamp).toLocaleString()}</p>}
+              <p className="whitespace-pre-line">{selectedNode.content ?? selectedNode.detail}</p>
+              <p><span className="text-[#f5f5f7]">Connected memories:</span> {relatedCount}</p>
+            </div>
+          )}
+        </aside>
+      )}
     </section>
   );
 }

@@ -75,7 +75,11 @@ export default function OverviewPage() {
       </div>
       <section aria-label="Workspace statistics" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => (
-          <article key={stat.label} className="rounded-md border border-neutral-800 bg-black p-5">
+          <article
+            key={stat.label}
+            className="glass-panel rounded-md border border-neutral-800 bg-black p-5"
+            style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          >
             <p className="text-sm text-neutral-400">{stat.label}</p>
             <p className="mt-4 text-2xl font-semibold text-white">{stat.value}</p>
             <p className={`mt-2 text-xs ${error && stat.label === "Total memories" ? "text-rose-300" : "text-neutral-500"}`}>
@@ -84,7 +88,10 @@ export default function OverviewPage() {
           </article>
         ))}
       </section>
-      <section className="rounded-md border border-neutral-800 bg-black">
+      <section
+        className="glass-panel rounded-md border border-neutral-800 bg-black"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
         <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
           <h3 className="text-sm font-semibold text-white">Recent memories</h3>
           {total ? (

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const metadataBaseUrl = process.env.NEXTAUTH_URL?.trim();
+
 export const metadata: Metadata = {
-  metadataBase: new URL("http://127.0.0.1:3000"),
+  ...(metadataBaseUrl ? { metadataBase: new URL(metadataBaseUrl) } : {}),
   title: "Synra — The AI Engineering Brain",
   description: "A shared, evidence-backed memory layer for engineering teams and AI coding tools.",
 };

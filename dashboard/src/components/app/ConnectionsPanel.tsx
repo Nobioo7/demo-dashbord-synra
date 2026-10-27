@@ -56,7 +56,10 @@ function ConnectionSource({
   note: string;
 }) {
   return (
-    <article className="rounded-md border border-neutral-800 bg-black p-5">
+    <article
+      className="glass-panel rounded-md border border-neutral-800 bg-black p-5"
+      style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-md border border-neutral-800 bg-neutral-950 text-sm font-semibold text-neutral-200">
@@ -259,7 +262,10 @@ export default function ConnectionsPanel() {
         </div>
       </section>
 
-      <section className="rounded-md border border-neutral-800 bg-black p-5 sm:p-6">
+      <section
+        className="glass-panel rounded-md border border-neutral-800 bg-black p-5 sm:p-6"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">MCP setup</p>
@@ -353,7 +359,10 @@ export default function ConnectionsPanel() {
         </div>
       </section>
 
-      <section className="rounded-md border border-neutral-800 bg-black p-5 sm:p-6">
+      <section
+        className="glass-panel rounded-md border border-neutral-800 bg-black p-5 sm:p-6"
+        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+      >
         <div className="flex items-start gap-4">
           <div className="grid size-10 shrink-0 place-items-center rounded-md border border-neutral-800 bg-neutral-950 text-neutral-300">
             <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.7">

@@ -49,7 +49,10 @@ function GitHubIngestCard() {
   }
 
   return (
-    <article className="flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 sm:p-6">
+    <article
+      className="glass-panel flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 transition-all hover:border-white/20 sm:p-6"
+      style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="grid size-11 place-items-center rounded-md border border-neutral-800 bg-neutral-950 text-neutral-300">
           <svg aria-hidden="true" viewBox="0 0 24 24" className="size-6" fill="currentColor">
@@ -102,7 +105,10 @@ function GmailIngestCard() {
   const [message, setMessage] = useState("");
 
   return (
-    <article className="flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 sm:p-6">
+    <article
+      className="glass-panel flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 transition-all hover:border-white/20 sm:p-6"
+      style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="grid size-11 place-items-center rounded-md border border-neutral-800 bg-neutral-950 text-lg font-semibold text-neutral-300">
           M
@@ -134,7 +140,10 @@ function ManualIngestCard() {
   const [saved, setSaved] = useState(false);
 
   return (
-    <article className="flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 sm:p-6">
+    <article
+      className="glass-panel flex h-full flex-col rounded-md border border-neutral-800 bg-black p-5 transition-all hover:border-white/20 sm:p-6"
+      style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="grid size-11 place-items-center rounded-md border border-neutral-800 bg-neutral-950 text-xl text-neutral-300">
           +

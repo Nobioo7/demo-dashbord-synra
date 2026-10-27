@@ -44,6 +44,7 @@ async function proxy(request: NextRequest, { params }: RouteContext): Promise<Re
   headers.delete("x-synra-user-id");
   headers.delete("x-synra-auth-timestamp");
   headers.delete("x-synra-auth-signature");
+  headers.delete("cookie");
   if (userId && authSignature) {
     headers.set("X-Synra-User-Id", userId);
     headers.set("X-Synra-Auth-Timestamp", authTimestamp);

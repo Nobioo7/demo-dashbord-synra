@@ -1057,3 +1057,337 @@ body.menu-open .landing-menu-toggle {
     transform: none !important;
   }
 }
+
+.glass-panel {
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 3%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 10%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  background-color: #0c0c0c;
+  background-image: none;
+}
+
+.dashboard-shell[data-page="/app/overview"] {
+  background-image:
+    radial-gradient(ellipse at 4% 0%, rgb(77 139 255 / 8%), transparent 38%),
+    radial-gradient(ellipse at 96% 100%, rgb(136 87 255 / 6%), transparent 34%);
+}
+
+.dashboard-shell .app-sidebar-frame {
+  border: 0;
+}
+
+.dashboard-shell .app-sidebar.glass-panel {
+  border-color: rgb(255 255 255 / 9%);
+  background: rgb(255 255 255 / 2%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 8%), 0 18px 60px rgb(0 0 0 / 32%);
+}
+
+.app-sidebar-brand {
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+.app-sidebar .app-workspace-switcher {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+}
+
+.app-sidebar .app-nav-link {
+  border-left-color: transparent;
+  color: rgb(255 255 255 / 50%);
+  transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-sidebar .app-nav-link:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 5%);
+}
+
+.app-sidebar .app-nav-link[aria-current="page"] {
+  border-left-color: rgb(255 255 255 / 80%);
+  background: rgb(255 255 255 / 10%);
+  box-shadow: inset 0 0 18px rgb(255 255 255 / 3%), 0 0 24px rgb(255 255 255 / 2%);
+  color: #fff;
+}
+
+.app-sidebar-user {
+  border-color: rgb(255 255 255 / 8%);
+}
+
+.dashboard-shell .app-topbar.glass-panel {
+  min-height: 64px;
+  border-color: rgb(255 255 255 / 10%);
+  background: rgb(255 255 255 / 4%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 8%), 0 12px 42px rgb(0 0 0 / 24%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.dashboard-shell .app-topbar > button {
+  border-radius: 9999px;
+  padding: 0.625rem 1rem;
+  font-weight: 600;
+}
+
+.dashboard-shell .app-topbar > button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 90%);
+  transform: translateY(-1px);
+}
+
+.dashboard-shell .app-page-title {
+  letter-spacing: -0.035em;
+}
+
+.shiny-text,
+.graph-page [aria-label="Synra memory graph"] > header h1 {
+  background: linear-gradient(105deg, #fff 8%, rgb(255 255 255 / 45%) 33%, #fff 51%, rgb(255 255 255 / 62%) 70%, #fff 92%);
+  background-size: 220% 100%;
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: aura-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes aura-shimmer {
+  0%, 100% { background-position: 100% 50%; }
+  50% { background-position: 0% 50%; }
+}
+
+.dashboard-shell article.glass-panel,
+.dashboard-shell section.glass-panel {
+  border-color: rgb(255 255 255 / 8%);
+  background: rgb(255 255 255 / 3%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 10%), 0 14px 42px rgb(0 0 0 / 12%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dashboard-shell article.glass-panel:hover {
+  border-color: rgb(255 255 255 / 20%);
+  background: rgb(255 255 255 / 4%);
+}
+
+.dashboard-shell button[class~="bg-white"],
+.dashboard-shell a[class~="bg-white"],
+.auth-shell button {
+  border-radius: 9999px;
+}
+
+.dashboard-shell input,
+.dashboard-shell select,
+.dashboard-shell textarea {
+  border-color: rgb(255 255 255 / 10%);
+  border-radius: 12px;
+  background-color: rgb(255 255 255 / 5%);
+}
+
+.dashboard-shell input:focus,
+.dashboard-shell select:focus,
+.dashboard-shell textarea:focus {
+  border-color: rgb(255 255 255 / 30%);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 5%);
+}
+
+.dashboard-shell .memory-table {
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 16px;
+  background: #0e1014 !important;
+  box-shadow: none;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dashboard-shell .memory-table article.memory-row {
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-shell .memory-table article.memory-row:hover {
+  background: rgb(255 255 255 / 5%);
+}
+
+.dashboard-shell .source-pill {
+  border-color: rgb(255 255 255 / 10%);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 5%);
+  color: rgb(255 255 255 / 72%);
+}
+
+.auth-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #0c0c0c;
+  background-image:
+    radial-gradient(ellipse at 10% 12%, rgb(77 139 255 / 11%), transparent 38%),
+    radial-gradient(ellipse at 92% 86%, rgb(136 87 255 / 9%), transparent 34%);
+}
+
+.auth-background {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.58;
+  filter: brightness(0.68) saturate(0.82);
+  pointer-events: none;
+}
+
+.auth-shell::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(140deg, rgb(12 12 12 / 24%), rgb(12 12 12 / 42%));
+  content: "";
+  pointer-events: none;
+}
+
+.auth-window {
+  overflow: hidden;
+  border-radius: 18px;
+  border-color: rgb(255 255 255 / 14%);
+  background: rgb(22 24 29 / 60%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 12%), 0 32px 100px rgb(0 0 0 / 48%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.auth-window-bar {
+  display: flex;
+  height: 42px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+  background: rgb(255 255 255 / 3%);
+}
+
+.auth-window-dot {
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+}
+
+.auth-window-content {
+  padding: 28px;
+}
+
+.auth-window-content > button {
+  border-radius: 9999px;
+}
+
+.dashboard-shell .graph-page {
+  background: #0c0c0c;
+}
+
+.graph-page > [aria-label="Synra memory graph"] {
+  background-color: #0c0c0c;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.graph-page [aria-label="Synra memory graph"] > header {
+  inset: 12px 16px auto;
+  min-height: 64px;
+  height: auto;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 4%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 8%), 0 12px 36px rgb(0 0 0 / 18%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.graph-page [aria-label="Synra memory graph"] > header button,
+.graph-page [aria-label="Synra memory graph"] > div button,
+.graph-page [aria-label="Synra memory graph"] > aside button {
+  border-radius: 9999px;
+}
+
+.graph-page [aria-label="Synra memory graph"] > header div.flex.items-center.rounded-md {
+  border-color: rgb(255 255 255 / 10%);
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 5%);
+}
+
+.graph-page [aria-label="Synra memory graph"] > header + p + div {
+  padding: 12px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 16px;
+  background: rgb(12 12 12 / 82%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 6%), 0 12px 36px rgb(0 0 0 / 18%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.graph-page [aria-label="Synra memory graph"] > aside[class*="left-5"] {
+  border-color: rgb(255 255 255 / 10%);
+  border-radius: 16px;
+  background: rgb(12 12 12 / 82%);
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 6%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.graph-page [aria-label="Synra memory graph"] > aside[class*="left-6"] {
+  border-color: rgb(255 255 255 / 10%);
+  border-radius: 16px;
+  background: rgb(12 12 12 / 90%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+@media (max-width: 640px) {
+  .dashboard-shell .app-sidebar-frame {
+    width: 18rem;
+  }
+
+  .dashboard-shell .app-topbar.glass-panel {
+    margin-inline: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .auth-window-content {
+    padding: 24px 20px;
+  }
+
+  .graph-page [aria-label="Synra memory graph"] > header {
+    inset-inline: 8px;
+    align-items: flex-start;
+    padding: 10px 12px;
+  }
+
+  .graph-page [aria-label="Synra memory graph"] > header > div:first-child {
+    flex-wrap: wrap;
+  }
+
+  .graph-page [aria-label="Synra memory graph"] > header + p + div {
+    top: 6rem;
+    right: 8px;
+    max-width: calc(100vw - 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-text,
+  .graph-page [aria-label="Synra memory graph"] > header h1 {
+    animation: none;
+    background: none;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+  }
+
+  .auth-background {
+    display: none;
+  }
+}

@@ -68,14 +68,14 @@ function Sidebar({
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex h-full flex-col bg-black">
-      <Link href="/app/overview" className="flex h-16 items-center gap-3 border-b border-neutral-800 px-5" onClick={onNavigate}>
-        <span className="grid size-9 place-items-center rounded-md border border-neutral-800 bg-neutral-950 font-semibold text-white">S</span>
+    <div className="app-sidebar glass-panel flex h-full flex-col" style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+      <Link href="/app/overview" className="app-sidebar-brand flex h-16 items-center gap-3 px-5" onClick={onNavigate}>
+        <span className="grid size-9 place-items-center rounded-xl border border-white/10 bg-white/5 font-semibold text-white">S</span>
         <span className="text-sm font-semibold tracking-[0.2em] text-white">SYNRA</span>
       </Link>
-      <div className="mx-4 mt-5 rounded-md border border-neutral-800 bg-neutral-950 px-3 py-3">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-500">Workspace</p>
-        <p className="mt-1 truncate text-sm font-medium text-neutral-200">{workspaceName}</p>
+      <div className="app-workspace-switcher mx-4 mt-5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/40">Workspace</p>
+        <p className="mt-1 truncate text-sm font-medium text-white/90">{workspaceName}</p>
       </div>
       <nav aria-label="Main navigation" className="mt-6 flex-1 space-y-1 px-3">
         {navigation.map((item) => {
@@ -86,10 +86,10 @@ function Sidebar({
               href={item.href}
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-md border-l-2 px-3 py-2.5 text-sm transition ${
+              className={`app-nav-link flex items-center gap-3 rounded-xl border-l-2 px-3 py-2.5 text-sm transition ${
                 active
-                  ? "border-white bg-neutral-900 font-medium text-white"
-                  : "border-transparent text-neutral-400 hover:bg-neutral-900 hover:text-neutral-100"
+                  ? "border-white bg-white/10 font-medium text-white"
+                  : "border-transparent text-white/50 hover:bg-white/5 hover:text-white"
               }`}
             >
               <NavIcon name={item.icon} />
@@ -98,9 +98,9 @@ function Sidebar({
           );
         })}
       </nav>
-      <div className="border-t border-neutral-800 p-4">
+      <div className="app-sidebar-user border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-neutral-800 text-sm font-semibold text-white">
+          <span className="grid size-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-sm font-semibold text-white">
             {initial}
           </span>
           <div className="min-w-0 flex-1">
@@ -112,7 +112,7 @@ function Sidebar({
             onClick={() => void signOut({ callbackUrl: "/login" })}
             aria-label="Sign out"
             title="Sign out"
-            className="rounded-md p-2 text-neutral-400 transition hover:bg-neutral-900 hover:text-white"
+            className="rounded-xl p-2 text-white/50 transition hover:bg-white/10 hover:text-white"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24" className="size-[18px]" fill="none" stroke="currentColor" strokeWidth="1.7">
               <path d="M10 17l5-5-5-5M15 12H3M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
@@ -140,8 +140,8 @@ export default function AppShell({
   const title = titles[pathname] || "Workspace";
 
   return (
-    <div className="dashboard-shell min-h-screen bg-black text-neutral-100">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-neutral-800 lg:block">
+    <div className="dashboard-shell min-h-screen bg-[#0c0c0c] text-white" data-page={pathname}>
+      <aside className="app-sidebar-frame fixed inset-y-0 left-0 z-30 hidden w-64 p-2 lg:block">
         <Sidebar workspaceName={workspaceName} user={user} pathname={pathname} onNavigate={() => undefined} />
       </aside>
 
@@ -153,28 +153,31 @@ export default function AppShell({
             onClick={() => setDrawerOpen(false)}
             className="absolute inset-0 bg-black/70"
           />
-          <aside className="absolute inset-y-0 left-0 w-72 max-w-[85vw] border-r border-neutral-800 shadow-2xl">
+          <aside className="app-sidebar-frame absolute inset-y-0 left-0 w-72 max-w-[85vw] p-2 shadow-2xl">
             <Sidebar workspaceName={workspaceName} user={user} pathname={pathname} onNavigate={() => setDrawerOpen(false)} />
           </aside>
         </div>
       ) : null}
 
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-neutral-800 bg-black px-4 sm:px-6">
+        <header
+          className="app-topbar glass-panel sticky top-3 z-20 mx-3 flex h-16 items-center justify-between px-4 sm:mx-5 sm:px-6"
+          style={{ backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)" }}
+        >
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
               aria-label="Open navigation"
               onClick={() => setDrawerOpen(true)}
-              className="rounded-md p-2 text-neutral-300 hover:bg-neutral-900 lg:hidden"
+              className="rounded-xl p-2 text-white/70 hover:bg-white/10 lg:hidden"
             >
               <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h1 className="truncate text-sm font-semibold text-white sm:text-base">{title}</h1>
-            <span className="hidden text-xs text-neutral-600 sm:inline">/</span>
-            <span className="hidden max-w-48 truncate rounded-md border border-neutral-800 px-2 py-1 text-xs text-neutral-400 sm:inline">{workspaceName}</span>
+            <h1 className={`app-page-title truncate text-sm font-semibold text-white sm:text-base${pathname === "/app/graph" ? " shiny-text" : ""}`}>{title}</h1>
+            <span className="hidden text-xs text-white/30 sm:inline">/</span>
+            <span className="hidden max-w-48 truncate rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60 sm:inline">{workspaceName}</span>
           </div>
           <IngestModal
             projectId={workspaceId}
@@ -182,7 +185,7 @@ export default function AppShell({
             onIngested={() => window.location.reload()}
           />
         </header>
-        <main className="min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="app-main min-h-[calc(100vh-4rem)] p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

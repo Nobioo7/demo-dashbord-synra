@@ -27,6 +27,9 @@ from fastapi.responses import JSONResponse
 from pydantic import AliasChoices, BaseModel, EmailStr, Field, field_validator
 from supabase import Client
 
+BACKEND_DIR = Path(__file__).resolve().parent
+load_dotenv(BACKEND_DIR / ".env")
+
 if __package__:
     from .database import get_supabase_client
 else:
@@ -37,8 +40,6 @@ if __package__:
 else:
     from agentmemory_bridge import router as agentmemory_router
 
-
-load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("SynraBackend")
@@ -51,7 +52,6 @@ WAITLIST_RATE_LIMIT_WINDOW_SECONDS = 60
 WAITLIST_RATE_LIMIT_MAX_REQUESTS = 5
 WAITLIST_REQUESTS_BY_IP: dict[str, list[datetime]] = {}
 WAITLIST_RATE_LIMIT_LOCK = threading.Lock()
-BACKEND_DIR = Path(__file__).resolve().parent
 GITHUB_API_URL = "https://api.github.com"
 GITHUB_REQUEST_TIMEOUT_SECONDS = 10
 GITHUB_ACTIVITY_LIMIT = 5

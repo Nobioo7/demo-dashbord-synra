@@ -127,8 +127,10 @@ MCP/Chrome Extension requests authenticate directly with a generated scoped key.
    its credentials empty to receive explicit database-unavailable responses.
 2. Set `APP_ENV=development`, `SYNRA_SESSION_SECRET`, and the matching values in
    `dashboard/.env.local`. Keep `.env` files out of version control.
-3. Start FastAPI and Next.js locally. Complete Google sign-in, create a
-   workspace, then create an integration key from Connections.
+3. Start FastAPI and Next.js locally. In development, sign in with the local
+   email/password Credentials provider; Google sign-in is available only when
+   valid OAuth credentials are configured. Create a workspace, then create an
+   integration key from Connections.
 4. Run backend tests with
    `python -m unittest discover -s backend/tests -v`, and dashboard checks with
    `pnpm --dir dashboard build` and `pnpm --dir dashboard lint`.

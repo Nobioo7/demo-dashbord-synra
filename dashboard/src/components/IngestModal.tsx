@@ -61,13 +61,17 @@ export default function IngestModal({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="pointer-events-auto rounded-md bg-white px-3 py-2 text-sm font-medium text-black transition-colors duration-200 hover:bg-neutral-200"
+        className="pointer-events-auto rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition-colors duration-200 hover:bg-neutral-200"
       >
         {triggerLabel}
       </button>
       {open && (
         <div className="pointer-events-auto fixed inset-0 z-10 grid place-items-center bg-black/80 p-4">
-          <form onSubmit={submit} className="w-full max-w-lg space-y-4 rounded-lg border border-neutral-800 bg-neutral-950 p-6 shadow-2xl">
+          <form
+            onSubmit={submit}
+            className="glass-panel w-full max-w-lg space-y-4 rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl"
+            style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          >
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-white">Add memory</h2>
               <button type="button" onClick={() => setOpen(false)} className="text-neutral-400 hover:text-white" aria-label="Close">
